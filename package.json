@@ -1,0 +1,25 @@
+{
+    "name": "chart-annotation",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build && cp -f dist/index.html dist/404.html",
+      "preview": "vite preview",
+      "predeploy": "npm run build",
+      "deploy": "gh-pages -d dist -b gh-pages"
+    },
+    "dependencies": {
+      "@supabase/supabase-js": "^2.50.0",
+      "jszip": "^3.10.1",
+      "react": "^19.1.0",
+      "react-dom": "^19.1.0"
+    },
+    "devDependencies": {
+      "@vitejs/plugin-react": "^4.4.1",
+      "gh-pages": "^6.3.0",
+      "vite": "^6.3.5"
+    }
+  }
+  
