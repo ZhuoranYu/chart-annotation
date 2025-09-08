@@ -1,11 +1,12 @@
-export default function TaskSelect({ tasks, value, onChange }) {
+export default function TaskSelect({ tasks = [], value = "", onChange }) {
   return (
     <select
+      value={value}
+      onChange={(e) => onChange && onChange(e.target.value)}
       className="select"
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value || null)}
+      style={{minWidth: 240}}
     >
-      <option value="">Select a task first…</option>
+      <option value="">Choose Task…</option>
       {tasks.map((t) => (
         <option key={t} value={t}>{t}</option>
       ))}

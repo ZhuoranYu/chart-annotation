@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useEffect, useState } from "react";
 import {
   fetchTasks, fetchExample, submitAnnotation, getStats,
@@ -15,6 +14,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
 
+  // load task list
   useEffect(() => {
     (async () => {
       try {
@@ -26,6 +26,7 @@ export default function App() {
     })();
   }, []);
 
+  // when task changes, refresh stats and load first example
   useEffect(() => {
     if (!task) return;
     (async () => {
@@ -92,13 +93,13 @@ export default function App() {
         <div className="stats" style={{marginTop:8, padding:"8px 12px", border:"1px solid #223046", borderRadius:10}}>
           <b>Task:</b> {task} &nbsp; | &nbsp;
           <b>Total:</b> {stats.total} &nbsp; | &nbsp;
-          <b>Done:</b> {done} (<span title="有答案">{stats.answered}</span> + <span title="缺信息">{stats.missing}</span>) &nbsp; | &nbsp;
+          <b>Done:</b> {done} (<span title="answered">{stats.answered}</span> + <span title="missing">{stats.missing}</span>) &nbsp; | &nbsp;
           <b>Remaining:</b> {stats.remaining}
         </div>
       )}
 
       {err && <div className="error">Error: {err}</div>}
-      {!task && <p className="tip">Select a task first</p>}
+      {!task && <p className="tip">Choose a task from the selector.</p>}
 
       {task && (
         <div className="content">
@@ -106,8 +107,8 @@ export default function App() {
 
           {!loading && !current && (
             <div className="empty">
-              <p>All examples under the task is completed 🎉</p>
-              <button onClick={() => { refreshStats(task); loadNext(task); }}>刷新</button>
+              <p>No remaining unannotated examples for this task 🎉</p>
+              <button onClick={() => { refreshStats(task); loadNext(task); }}>Refresh</button>
             </div>
           )}
 

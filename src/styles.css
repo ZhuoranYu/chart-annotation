@@ -1,10 +1,11 @@
 :root {
-    --bg: #0b0f14;
-    --card: #121822;
-    --text: #e6edf3;
-    --muted: #9aa7b2;
-    --primary: #3b82f6;
+    --bg: #0b1220;
+    --fg: #d5e3f0;
+    --muted: #9fb3c8;
     --border: #223046;
+    --primary: #4da3ff;
+    --card: #0d1524;
+    --surface: #0f1520;
   }
   
   * { box-sizing: border-box; }
@@ -12,57 +13,156 @@
   body {
     margin: 0;
     background: var(--bg);
-    color: var(--text);
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+    color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+                 "Helvetica Neue", Arial, "Noto Sans",
+                 "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
   
-  .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
-  .header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .header h1 { margin: 0; font-size: 20px; }
-  .toolbar { display: flex; gap: 8px; align-items: center; }
+  /* Layout */
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  .header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   
-  .select, .input, textarea, button {
-    border-radius: 10px; border: 1px solid var(--border); background: #0f1520; color: var(--text);
-  }
-  .select { padding: 8px 10px; }
-  .input, textarea { width: 100%; padding: 10px 12px; resize: vertical; }
-  
-  button { padding: 10px 14px; cursor: pointer; }
-  button.primary { background: var(--primary); border-color: var(--primary); color: white; }
-  button.ghost { background: transparent; }
-  button:disabled { opacity: 0.6; cursor: not-allowed; }
-  
-  .content { margin-top: 16px; }
-  .error { padding: 12px; border: 1px solid #b91c1c; background: #2a0f13; border-radius: 10px; }
-  .tip { opacity: 0.8; margin-top: 16px; }
-  
-  .card {
-    background: var(--card);
+  /* Inputs & Buttons */
+  .select {
+    background: var(--surface);
+    color: var(--fg);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 12px;
+    border-radius: 10px;
+    padding: 8px 10px;
   }
-  .card + .form { margin-top: 12px; }
+  button {
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--fg);
+  }
+  button.primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #041222;
+    font-weight: 600;
+  }
+  button.ghost:hover { border-color: #2e425c; }
   
-  .card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-  .muted { color: var(--muted); font-size: 12px; }
+  /* Cards */
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .card-header {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-body { padding: 12px; }
+  .muted { color: var(--muted); font-size: 13px; }
   
+  /* Media */
   .preview {
     width: 100%;
-    max-height: 76vh;
+    max-height: 70vh;
     object-fit: contain;
     display: block;
+    background: #000;
+    border-radius: 10px;
+  }
+  .noimg {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    background: var(--surface);
+    border-radius: 10px;
+  }
+  
+  /* Blocks */
+  .block-title {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    margin: 10px 0 6px;
+  }
+  .context-box {
+    white-space: pre-wrap;   /* keep line breaks */
+    word-break: break-word;
+    line-height: 1.5;
+    font-size: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    max-height: 320px;
+    overflow: auto;
+  }
+  .question { margin: 0; }
+  
+  /* Highlight for **marked** segments in context */
+/* bold red, no highlight background */
+mark.hi {
+    background: none;
+    color: #ff4d4f;   /* red */
+    font-weight: 800; /* strong bold */
+    padding: 0;
+    border-radius: 0;
+  }
+  
+  
+  /* Form */
+  .form .label { display:block; margin:10px 0 6px; color: var(--muted); }
+  .input {
+    width: 100%;
+    padding: 10px 12px;
     border-radius: 10px;
     border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--fg);
+    resize: vertical;
   }
+  .row { display:flex; align-items:center; gap:8px; }
   
-  .noimg {
-    height: 200px; display: grid; place-items: center;
-    border: 1px dashed var(--border); border-radius: 10px; color: var(--muted);
+  /* Options */
+  .options { display:flex; flex-direction: column; gap: 8px; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    cursor: pointer;
   }
+  .option input[type="radio"] { margin: 0; }
+  .option.active { outline: 2px solid var(--primary); }
   
-  .annotator .label { display: block; margin: 12px 0 6px; color: var(--muted); }
-  .row { display: flex; align-items: center; gap: 8px; margin: 6px 0 10px; }
-  .actions { display: flex; gap: 8px; justify-content: flex-end; }
-  .loading, .empty { padding: 20px; text-align: center; }
+  /* Page sections */
+  .content { margin-top: 16px; display:flex; flex-direction:column; gap:12px; }
+  .loading, .empty, .error, .tip {
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    color: var(--muted);
+  }
+  .stats { background: var(--card); padding: 8px 12px; border-radius: 10px; }
+  
+  /* Nice selection */
+  ::selection { background: rgba(77,163,255,0.35); color: #fff; }
+  
+  /* Scrollbar (WebKit) */
+  .context-box::-webkit-scrollbar { height: 10px; width: 10px; }
+  .context-box::-webkit-scrollbar-thumb {
+    background: #1c2a44;
+    border-radius: 10px;
+  }
+  .context-box::-webkit-scrollbar-track { background: transparent; }
   
