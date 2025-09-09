@@ -112,13 +112,14 @@ export default function App() {
             </div>
           )}
 
-          {current && (
-            <Annotator
-              example={current}
-              onSubmit={onSubmit}
-              onSkip={() => { refreshStats(task); loadNext(task); }}
-            />
-          )}
+        {current && (
+        <Annotator
+            task={task}               // ✅ pass task so we can update DB
+            example={current}
+            onSubmit={onSubmit}
+            onSkip={() => { refreshStats(task); loadNext(task); }}
+        />
+        )}
         </div>
       )}
     </div>

@@ -1,19 +1,22 @@
+// src/components/Annotator.jsx
 import { useEffect, useState } from "react";
 import ExampleCard from "./ExampleCard.jsx";
+import { updateQuestion } from "../api.js";
 
-export default function Annotator({ example, onSubmit, onSkip }) {
+export default function Annotator({ task, example, onSubmit, onSkip }) {
+  const [ex, setEx] = useState(example);
   const [answer, setAnswer] = useState("");
   const [missing, setMissing] = useState(false);
   const [selectedLetter, setSelectedLetter] = useState(null); // 'A' / 'B' / ...
 
   useEffect(() => {
-    // reset when example changes
+    setEx(example);
     setAnswer("");
     setMissing(false);
     setSelectedLetter(null);
   }, [example?.exampleId]);
 
-  const opts = Array.isArray(example?.options) ? example.options : [];
+  const opts = Array.isArray(ex?.options) ? ex.options : [];
   const canSubmit = missing || (answer && answer.trim().length > 0);
 
   function choose(letter) {
@@ -26,12 +29,34 @@ export default function Annotator({ example, onSubmit, onSkip }) {
     onSubmit({ human_prediction: answer, missing_information: missing });
   }
 
+  async function handleEditQuestion(newQ) {
+    try {
+      const res = await updateQuestion({
+        task,
+        exampleId: ex.exampleId,
+        newQuestion: newQ,
+        raw: ex.raw
+      });
+      if (res?.error) { alert(res.error); return false; }
+      // merge back locally so UI updates immediately
+      setEx(prev => ({
+        ...prev,
+        question: res.question,
+        raw: res.json_blob
+      }));
+      return true;
+    } catch (e) {
+      alert(e.message || String(e));
+      return false;
+    }
+  }
+
   return (
     <div className="annotator">
-      {/* 1) Image + Context + Question */}
-      <ExampleCard example={example} />
+      {/* 1) Image + Context + Question (editable) */}
+      <ExampleCard example={ex} onEditQuestion={handleEditQuestion} />
 
-      {/* 2) Options (if present), shown as A/B/C/D */}
+      {/* 2) Options (if present) */}
       {opts.length > 0 && (
         <div className="card" style={{marginTop:12}}>
           <div className="card-header"><div className="muted">Options</div></div>

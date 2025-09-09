@@ -1,13 +1,12 @@
 // src/components/ExampleCard.jsx
+import { useEffect, useState } from "react";
 
 // turn **marked** segments into <mark className="hi">marked</mark>
 function renderMarked(text) {
   if (!text) return null;
-
   const parts = [];
   const regex = /\*\*([\s\S]+?)\*\*/g; // non-greedy, spans newlines
   let last = 0, m, key = 0;
-
   while ((m = regex.exec(text)) !== null) {
     if (m.index > last) parts.push(text.slice(last, m.index));
     parts.push(<mark className="hi" key={`hi-${key++}`}>{m[1]}</mark>);
@@ -17,9 +16,21 @@ function renderMarked(text) {
   return parts;
 }
 
-export default function ExampleCard({ example }) {
-  // ✅ include question again
+export default function ExampleCard({ example, onEditQuestion }) {
   const { exampleId, image_url, context, question } = example || {};
+  const [editing, setEditing] = useState(false);
+  const [qValue, setQValue] = useState(question || "");
+
+  useEffect(() => {
+    setEditing(false);
+    setQValue(question || "");
+  }, [exampleId, question]);
+
+  async function save() {
+    if (!onEditQuestion) return setEditing(false);
+    const ok = await onEditQuestion(qValue);
+    if (ok !== false) setEditing(false);
+  }
 
   return (
     <div className="card">
@@ -45,10 +56,36 @@ export default function ExampleCard({ example }) {
           </div>
         </div>
 
-        {/* 3) Question (back in place) */}
+        {/* 3) Question with inline edit */}
         <div className="question-block" style={{ marginTop: 12 }}>
-          <div className="block-title">Question</div>
-          <h2 className="question">{question ?? "(no question field)"}</h2>
+          <div className="block-title" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+            <span>Question</span>
+            {!editing ? (
+              <button className="ghost" type="button" onClick={() => setEditing(true)}>Edit</button>
+            ) : null}
+          </div>
+
+          {!editing ? (
+            <h2 className="question">{question ?? "(no question field)"}</h2>
+          ) : (
+            <div>
+              <textarea
+                className="input"
+                rows={3}
+                value={qValue}
+                onChange={(e) => setQValue(e.target.value)}
+                placeholder="Edit the question…"
+              />
+              <div className="actions" style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                <button type="button" className="ghost" onClick={() => { setEditing(false); setQValue(question || ""); }}>
+                  Cancel
+                </button>
+                <button type="button" className="primary" onClick={save}>
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

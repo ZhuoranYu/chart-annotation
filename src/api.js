@@ -272,3 +272,32 @@ export async function dbgCounts(task) {
   return s;
 }
 if (typeof window !== "undefined") window.dbgCounts = dbgCounts;
+
+
+export async function updateQuestion({ task, exampleId, newQuestion, raw }) {
+  const t = norm(task);
+  const q = (newQuestion ?? "").toString().trim();
+  if (!q) return { error: "Question cannot be empty." };
+
+  // merge into existing json_blob
+  const newBlob = { ...(raw || {}) };
+  newBlob.question = q;
+  if (newBlob.metadata && typeof newBlob.metadata === "object") {
+    newBlob.metadata = { ...newBlob.metadata, question: q };
+  }
+
+  const patch = {
+    question: q,
+    json_blob: newBlob,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await (window.__supabase || supabase)
+    .from("examples")
+    .update(patch)
+    .ilike("task", t)
+    .eq("example_id", exampleId);
+
+  if (error) return { error: error.message };
+  return { ok: true, json_blob: newBlob, question: q };
+}
