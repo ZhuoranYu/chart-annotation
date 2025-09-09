@@ -17,7 +17,7 @@ function renderMarked(text) {
 }
 
 export default function ExampleCard({ example, onEditQuestion }) {
-  const { exampleId, image_url, context, question } = example || {};
+  const { exampleId, image_url, context, question, explanation } = example || {};
   const [editing, setEditing] = useState(false);
   const [qValue, setQValue] = useState(question || "");
 
@@ -56,11 +56,11 @@ export default function ExampleCard({ example, onEditQuestion }) {
           </div>
         </div>
 
-        {/* 3) Question with inline edit */}
+        {/* 3) Question (editable) */}
         <div className="question-block" style={{ marginTop: 12 }}>
           <div className="block-title" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
             <span>Question</span>
-            {!editing ? (
+            {!editing && onEditQuestion ? (
               <button className="ghost" type="button" onClick={() => setEditing(true)}>Edit</button>
             ) : null}
           </div>
@@ -87,6 +87,16 @@ export default function ExampleCard({ example, onEditQuestion }) {
             </div>
           )}
         </div>
+
+        {/* 4) Explanation — collapsed by default */}
+        {!!explanation && (
+          <details className="disclosure" style={{ marginTop: 12 }}>
+            <summary className="block-title">Explanation (click to expand)</summary>
+            <div className="explanation-box">
+              {explanation}
+            </div>
+          </details>
+        )}
       </div>
     </div>
   );

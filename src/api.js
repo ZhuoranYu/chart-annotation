@@ -134,6 +134,17 @@ export async function fetchExample(task) {
   ]);
   if (Array.isArray(context)) context = context.join("\n");
   context = (context ?? "").toString();
+
+  // pick explanation/rationale if present
+    let explanation = pick(ex, [
+        "explanation", "metadata.explanation",
+        "rationale", "metadata.rationale",
+        "reasoning", "metadata.reasoning",
+        "reason", "metadata.reason"
+    ]);
+    if (Array.isArray(explanation)) explanation = explanation.join("\n");
+    explanation = (explanation ?? "").toString();
+  
   
 
   const optionsRaw = pick(ex, [
@@ -149,11 +160,12 @@ export async function fetchExample(task) {
       exampleId: row.example_id,
       question,
       context,
-      options,      // [{label:'A', text:'...'}]
+      explanation,   // <-- add this
+      options,
       image_url,
       raw: ex
     }
-  };
+  };  
 }
 
 // ---------- Submit annotation (options=letter; freeform=string) ----------
