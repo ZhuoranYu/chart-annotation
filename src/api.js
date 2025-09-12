@@ -24,7 +24,7 @@ function pick(obj, keys) {
 }
 
 /** Normalize various option shapes to: [{label:'A', text:'...'}, ...] */
-function normalizeOptions(raw) {
+export function normalizeOptions(raw) {
   if (!raw) return [];
   if (Array.isArray(raw)) {
     const texts = Array.from(new Set(
@@ -50,6 +50,54 @@ function normalizeOptions(raw) {
   }
   return [];
 }
+
+export async function updateOptions({ task, exampleId, newOptions, raw }) {
+  const t = (task || "").trim().toLowerCase();
+  const safe = Array.isArray(newOptions)
+    ? newOptions
+        .map((o, i) => ({
+          label: (o?.label || "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i] || String(i + 1)).toString().trim().toUpperCase(),
+          text: (o?.text ?? "").toString().trim(),
+        }))
+        .filter(o => o.text.length > 0)
+    : [];
+
+  if (!safe.length) return { error: "Options cannot be empty." };
+
+  // Canonicalize to an object {A: "...", B: "...", ...}
+  const optionsObj = {};
+  for (const o of safe) optionsObj[o.label] = o.text;
+
+  // Merge into existing json_blob
+  const newBlob = { ...(raw || {}) };
+  newBlob.options = optionsObj;
+  // Keep common aliases in sync for compatibility
+  newBlob.answer_choices = safe.map(o => o.text);
+  if (newBlob.metadata && typeof newBlob.metadata === "object") {
+    newBlob.metadata = {
+      ...newBlob.metadata,
+      options: optionsObj,
+      answer_choices: safe.map(o => o.text),
+    };
+  }
+
+  const patch = {
+    json_blob: newBlob,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await (window.__supabase || supabase)
+    .from("examples")
+    .update(patch)
+    .ilike("task", t)
+    .eq("example_id", exampleId);
+
+  if (error) return { error: error.message };
+
+  // Return normalized list so the UI can refresh immediately
+  return { ok: true, json_blob: newBlob, options: safe };
+}
+
 
 /** Image URL resolver: try public URL first, fallback to signed URL */
 async function resolveImageURL(row) {
